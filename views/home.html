@@ -1,0 +1,11 @@
+{{define "title"}}Home · AG{{end }}
+
+{{define "content"}}
+  <p>Nice! This works! </p>
+
+  <ul>
+    {{range $post := .Posts}}
+      <li><a href="posts/{{$post.Filename}}">{{$post.Name}}</a></li>
+    {{end}}
+  </ul>
+{{end}}

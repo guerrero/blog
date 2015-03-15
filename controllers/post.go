@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"text/template"
 
 	"../models"
 )
@@ -12,13 +13,7 @@ type PostController struct {
 func (controller *PostController) ServeIndex(rw http.ResponseWriter, req *http.Request) {
 	postList := models.GetIndex()
 
-	var postNames string
-
-	for _, post := range postList.Posts {
-		postNames += post.Name
-	}
-
-	rw.Write([]byte(postNames))
+	renderView(rw, "home", "./views/home.html", postList)
 }
 
 func (controller *PostController) ServePost(rw http.ResponseWriter, req *http.Request) {
@@ -27,4 +22,18 @@ func (controller *PostController) ServePost(rw http.ResponseWriter, req *http.Re
 
 func (controller *PostController) ServeError(rw http.ResponseWriter, req *http.Request) {
 	models.GetError(rw, req)
+}
+
+func renderView(rw http.ResponseWriter, name string, file string, data interface{}) {
+
+	t := template.New(name)
+
+	t, err := t.ParseFiles("./views/base.html",
+		"./views/head.html",
+		"./views/footer.html",
+		file)
+
+	t = template.Must(t, err)
+
+	t.ExecuteTemplate(rw, "base", data)
 }
