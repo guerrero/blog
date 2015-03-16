@@ -61,8 +61,21 @@ func GetPost(req *http.Request) PostItem {
 	return PostItem{Name: ""}
 }
 
-func GetError(rw http.ResponseWriter, req *http.Request) {
-	rw.Write([]byte("Error"))
+func GetError(req *http.Request) string {
+
+	var errData string
+
+	if path := req.URL.Path; strings.Contains(string(path), "posts/") {
+
+		reqPost := strings.Replace(path, "/posts/", "", 1)
+		reqPost = strings.Replace(reqPost, "-", " ", -1)
+
+		errData = "The post \"" + reqPost + "\" doesn't exist or has been removed"
+	} else {
+		errData = "There's no page associated to " + path
+	}
+
+	return errData
 }
 
 func setPostName(filename string) string {

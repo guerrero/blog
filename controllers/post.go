@@ -27,7 +27,11 @@ func (controller *PostController) ServePost(rw http.ResponseWriter, req *http.Re
 }
 
 func (controller *PostController) ServeError(rw http.ResponseWriter, req *http.Request) {
-	models.GetError(rw, req)
+
+	error := models.GetError(req)
+
+	renderView(rw, "error", "./views/error.html", error)
+
 }
 
 func renderView(rw http.ResponseWriter, name string, file string, data interface{}) {
