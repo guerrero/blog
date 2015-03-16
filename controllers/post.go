@@ -17,7 +17,13 @@ func (controller *PostController) ServeIndex(rw http.ResponseWriter, req *http.R
 }
 
 func (controller *PostController) ServePost(rw http.ResponseWriter, req *http.Request) {
-	models.GetPost(rw, req)
+	post := models.GetPost(req)
+
+	if post.Name != "" {
+		renderView(rw, "post", "./views/post.html", post)
+	} else {
+		controller.ServeError(rw, req)
+	}
 }
 
 func (controller *PostController) ServeError(rw http.ResponseWriter, req *http.Request) {

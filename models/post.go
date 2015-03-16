@@ -12,7 +12,7 @@ import (
 type PostItem struct {
 	Name     string
 	Filename string
-	Content  []byte
+	Content  string
 }
 
 type PostList struct {
@@ -34,8 +34,8 @@ func GetIndex() PostList {
 			filename := strings.Replace(file.Name(), ".md", "", -1)
 			name := setPostName(filename)
 
-			fileContent, _ := ioutil.ReadFile(file.Name())
-			renderedOutput := blackfriday.MarkdownCommon(fileContent)
+			fileContent, _ := ioutil.ReadFile("content/" + file.Name())
+			renderedOutput := string(blackfriday.MarkdownCommon(fileContent))
 
 			postList.Posts[index] = PostItem{Name: name, Filename: filename, Content: renderedOutput}
 
@@ -46,10 +46,19 @@ func GetIndex() PostList {
 	return postList
 }
 
-func GetPost(rw http.ResponseWriter, req *http.Request) {
-	postId := bone.GetValue(req, "id")
+func GetPost(req *http.Request) PostItem {
+	query := bone.GetValue(req, "id")
+	postReq := strings.Replace(query, " ", "-", -1)
 
-	rw.Write([]byte(postId))
+	postList := GetIndex()
+
+	for _, post := range postList.Posts {
+		if post.Filename == postReq {
+			return post
+		}
+	}
+
+	return PostItem{Name: ""}
 }
 
 func GetError(rw http.ResponseWriter, req *http.Request) {
