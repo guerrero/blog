@@ -40,6 +40,7 @@ func renderView(rw http.ResponseWriter, name string, file string, data interface
 
 	t, err := t.ParseFiles("./views/base.html",
 		"./views/head.html",
+		"./views/header.html",
 		"./views/footer.html",
 		file)
 
