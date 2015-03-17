@@ -4,6 +4,8 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/go-zoo/bone"
+
 	"../models"
 )
 
@@ -17,7 +19,9 @@ func (controller *PostController) ServeIndex(rw http.ResponseWriter, req *http.R
 }
 
 func (controller *PostController) ServePost(rw http.ResponseWriter, req *http.Request) {
-	post := models.GetPost(req)
+	postRequested := bone.GetValue(req, "id")
+
+	post := models.GetPost(postRequested)
 
 	if post.Name != "" {
 		renderView(rw, "post", "./views/post.html", post)
@@ -28,7 +32,9 @@ func (controller *PostController) ServePost(rw http.ResponseWriter, req *http.Re
 
 func (controller *PostController) ServeError(rw http.ResponseWriter, req *http.Request) {
 
-	error := models.GetError(req)
+	pathRequested := req.URL.Path
+
+	error := models.GetError(pathRequested)
 
 	renderView(rw, "error", "./views/error.html", error)
 

@@ -2,10 +2,8 @@ package models
 
 import (
 	"io/ioutil"
-	"net/http"
 	"strings"
 
-	"github.com/go-zoo/bone"
 	"github.com/russross/blackfriday"
 )
 
@@ -46,14 +44,14 @@ func GetIndex() PostList {
 	return postList
 }
 
-func GetPost(req *http.Request) PostItem {
-	query := bone.GetValue(req, "id")
-	postReq := strings.Replace(query, " ", "-", -1)
+func GetPost(postRequested string) PostItem {
+
+	postRequested = strings.Replace(postRequested, " ", "-", -1)
 
 	postList := GetIndex()
 
 	for _, post := range postList.Posts {
-		if post.Filename == postReq {
+		if post.Filename == postRequested {
 			return post
 		}
 	}
@@ -61,17 +59,17 @@ func GetPost(req *http.Request) PostItem {
 	return PostItem{Name: ""}
 }
 
-func GetError(req *http.Request) string {
+func GetError(pathRequested string) string {
 
 	var errData string
 
-	if path := req.URL.Path; strings.HasPrefix(string(path), "/posts/") {
-		reqPost := strings.Replace(path, "/posts/", "", 1)
-		reqPost = strings.Replace(reqPost, "-", " ", -1)
+	if strings.HasPrefix(pathRequested, "/posts/") {
+		postRequested := strings.Replace(pathRequested, "/posts/", "", 1)
+		postRequested = strings.Replace(postRequested, "-", " ", -1)
 
-		errData = "The post \"" + reqPost + "\" doesn't exist or has been removed"
+		errData = "The post \"" + postRequested + "\" doesn't exist or has been removed"
 	} else {
-		errData = "There's no page associated to " + path
+		errData = "There's no page associated to " + pathRequested
 	}
 
 	return errData
