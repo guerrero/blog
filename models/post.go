@@ -65,8 +65,7 @@ func GetError(req *http.Request) string {
 
 	var errData string
 
-	if path := req.URL.Path; strings.Contains(string(path), "posts/") {
-
+	if path := req.URL.Path; strings.HasPrefix(string(path), "/posts/") {
 		reqPost := strings.Replace(path, "/posts/", "", 1)
 		reqPost = strings.Replace(reqPost, "-", " ", -1)
 
