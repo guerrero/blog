@@ -23,7 +23,7 @@ func GetIndex() PostList {
 
 	dirFiles, _ := ioutil.ReadDir("./content")
 
-	posts := make([]PostItem, len(dirFiles))
+	posts := make([]PostItem, 0)
 	postList := PostList{Posts: posts}
 
 	index := 0
@@ -37,7 +37,7 @@ func GetIndex() PostList {
 			fileContent, _ := ioutil.ReadFile("content/" + file.Name())
 			renderedOutput := string(blackfriday.MarkdownCommon(fileContent))
 
-			postList.Posts[index] = PostItem{Name: name, Filename: filename, Content: renderedOutput}
+			postList.Posts = append(postList.Posts, PostItem{Name: name, Filename: filename, Content: renderedOutput})
 
 			index += 1
 		}
