@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"html/template"
 	"net/http"
-	"text/template"
 
 	"../models"
 )
