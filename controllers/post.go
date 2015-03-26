@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"html/template"
 	"net/http"
+	"text/template"
 
 	"github.com/go-zoo/bone"
 
@@ -15,7 +15,7 @@ type PostController struct {
 func (controller *PostController) ServeIndex(rw http.ResponseWriter, req *http.Request) {
 	postList := models.GetIndex()
 
-	renderView(rw, "home", "./views/home.html", postList)
+	renderView(rw, "home", postList)
 }
 
 func (controller *PostController) ServePost(rw http.ResponseWriter, req *http.Request) {
@@ -24,7 +24,7 @@ func (controller *PostController) ServePost(rw http.ResponseWriter, req *http.Re
 	post := models.GetPost(postRequested)
 
 	if post.Name != "" {
-		renderView(rw, "post", "./views/post.html", post)
+		renderView(rw, "post", post)
 	} else {
 		controller.ServeError(rw, req)
 	}
@@ -36,19 +36,29 @@ func (controller *PostController) ServeError(rw http.ResponseWriter, req *http.R
 
 	error := models.GetError(pathRequested)
 
-	renderView(rw, "error", "./views/error.html", error)
+	renderView(rw, "error", error)
 
 }
 
-func renderView(rw http.ResponseWriter, name string, file string, data interface{}) {
+func renderView(rw http.ResponseWriter, view string, data interface{}) {
 
-	t := template.New(name)
+	t := template.New(view)
 
-	t, err := t.ParseFiles("./views/base.html",
-		"./views/head.html",
-		"./views/header.html",
-		"./views/footer.html",
-		file)
+	viewNames := []string{
+		"base",
+		"head",
+		"header",
+		"footer",
+		view}
+
+	viewFiles := make([]string, 0)
+
+	for _, viewName := range viewNames {
+		viewFile := "./views/" + viewName + ".html"
+		viewFiles = append(viewFiles, viewFile)
+	}
+
+	t, err := t.ParseFiles(viewFiles...)
 
 	t = template.Must(t, err)
 
